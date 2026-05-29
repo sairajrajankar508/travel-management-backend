@@ -143,17 +143,10 @@ public class AdminService {
     // TRAVEL POLICY MANAGEMENT
     // =====================================================
 
-    public String setPolicy(Double maxBudget, String allowedClass) {
-
-        TravelPolicy policy = new TravelPolicy();
-        policy.setMaxBudget(maxBudget);
-        policy.setAllowedClass(allowedClass);
+    public String setPolicy(TravelPolicy policy) {
         policy.setActive(true);
-
         policyRepository.save(policy);
-
         log("POLICY_CREATED", "SYSTEM", "SUCCESS");
-
         return "Policy saved successfully";
     }
 
@@ -161,11 +154,16 @@ public class AdminService {
         return policyRepository.findAll();
     }
 
-    public TravelPolicy updatePolicy(Long id, Double maxBudget, String allowedClass) {
+    public TravelPolicy updatePolicy(Long id, TravelPolicy updated) {
         TravelPolicy policy = policyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Policy not found"));
-        if (maxBudget != null) policy.setMaxBudget(maxBudget);
-        if (allowedClass != null) policy.setAllowedClass(allowedClass);
+        if (updated.getPolicyName() != null) policy.setPolicyName(updated.getPolicyName());
+        if (updated.getDescription() != null) policy.setDescription(updated.getDescription());
+        if (updated.getMaxBudget() != null) policy.setMaxBudget(updated.getMaxBudget());
+        if (updated.getAllowedClass() != null) policy.setAllowedClass(updated.getAllowedClass());
+        if (updated.getMaxTripDays() != null) policy.setMaxTripDays(updated.getMaxTripDays());
+        if (updated.getPerDiemAllowance() != null) policy.setPerDiemAllowance(updated.getPerDiemAllowance());
+        if (updated.getHotelLimitPerNight() != null) policy.setHotelLimitPerNight(updated.getHotelLimitPerNight());
         policyRepository.save(policy);
         log("POLICY_UPDATED", "SYSTEM", "SUCCESS");
         return policy;

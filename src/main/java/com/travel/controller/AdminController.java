@@ -67,10 +67,7 @@ public class AdminController {
 
     @PostMapping("/policy")
     public String createPolicy(@RequestBody TravelPolicy policy) {
-        return adminService.setPolicy(
-                policy.getMaxBudget(),
-                policy.getAllowedClass()
-        );
+        return adminService.setPolicy(policy);
     }
 
     @GetMapping("/policy")
@@ -83,7 +80,7 @@ public class AdminController {
             @PathVariable Long id,
             @RequestBody TravelPolicy policy
     ) {
-        return adminService.updatePolicy(id, policy.getMaxBudget(), policy.getAllowedClass());
+        return adminService.updatePolicy(id, policy);
     }
 
     @PutMapping("/policy/toggle/{id}")
