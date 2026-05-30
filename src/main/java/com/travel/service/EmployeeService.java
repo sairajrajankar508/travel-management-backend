@@ -33,6 +33,9 @@ public class EmployeeService {
     @Autowired
     private com.travel.repository.TravelPolicyRepository travelPolicyRepository;
 
+    @Autowired
+    private ItineraryRepository itineraryRepository;
+
     // =====================================================
     // TOKEN UTILITY
     // =====================================================
@@ -92,7 +95,11 @@ public class EmployeeService {
             req.setPolicyViolated(false);
         }
 
-        req.setStatus(RequestStatus.DRAFT);
+        if ("SUBMITTED".equals(dto.getStatus())) {
+            req.setStatus(RequestStatus.SUBMITTED);
+        } else {
+            req.setStatus(RequestStatus.DRAFT);
+        }
 
         travelRequestRepository.save(req);
 
@@ -163,6 +170,14 @@ public class EmployeeService {
         req.setStartDate(dto.getStartDate());
         req.setEndDate(dto.getEndDate());
         req.setBudget(dto.getBudget());
+        req.setTransportMode(dto.getTransportMode());
+        req.setAccommodation(dto.getAccommodation());
+        req.setDescription(dto.getDescription());
+        req.setDocumentUrl(dto.getDocumentUrl());
+
+        if ("SUBMITTED".equals(dto.getStatus())) {
+            req.setStatus(RequestStatus.SUBMITTED);
+        }
 
         travelRequestRepository.save(req);
 
@@ -248,8 +263,22 @@ public class EmployeeService {
             return "Unauthorized";
         }
 
-        if (req.getStatus() != RequestStatus.DRAFT) {
-            return "Only draft can be deleted";
+        if (req.getStatus() != RequestStatus.DRAFT
+                && req.getStatus() != RequestStatus.CANCELLED
+                && req.getStatus() != RequestStatus.REJECTED) {
+            return "Only draft, cancelled, or rejected requests can be deleted";
+        }
+
+        // Delete associated itineraries first to avoid FK violation
+        List<Itinerary> itineraries = itineraryRepository.findByTravelRequestOrderByDayNumberAsc(req);
+        if (itineraries != null && !itineraries.isEmpty()) {
+            itineraryRepository.deleteAll(itineraries);
+        }
+
+        // Delete associated expenses
+        List<Expense> expenses = expenseRepository.findByTravelRequest(req);
+        if (expenses != null && !expenses.isEmpty()) {
+            expenseRepository.deleteAll(expenses);
         }
 
         travelRequestRepository.delete(req);

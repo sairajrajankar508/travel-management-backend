@@ -57,6 +57,18 @@ public class EmployeeController {
     }
 
     // =====================================================
+    // EDIT DRAFT REQUEST
+    // =====================================================
+    @PutMapping("/request/{requestId}")
+    public String editRequest(
+            @PathVariable Long requestId,
+            @RequestBody CreateTravelRequestDTO dto,
+            @RequestHeader("Authorization") String token
+    ) {
+        return employeeService.editDraftRequest(requestId, dto, token);
+    }
+
+    // =====================================================
     // SUBMIT REQUEST
     // =====================================================
     @PutMapping("/submit/{requestId}")

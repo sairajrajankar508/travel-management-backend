@@ -37,6 +37,12 @@ public class CreateTravelRequestDTO {
     private String accommodation;
 
     // =====================================================
+    // STATUS (DRAFT or SUBMITTED)
+    // =====================================================
+
+    private String status;
+
+    // =====================================================
     // EXTRA DETAILS
     // =====================================================
 
@@ -126,5 +132,13 @@ public class CreateTravelRequestDTO {
 
     public void setDocumentUrl(String documentUrl) {
         this.documentUrl = documentUrl;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
